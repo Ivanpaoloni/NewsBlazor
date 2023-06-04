@@ -1,0 +1,64 @@
+﻿@page "/"
+@using System.Net.Http
+@using System.Text.Json
+@using NewsBlazor.Models;
+
+@inject HttpClient httpClient
+
+<PageTitle>Index</PageTitle>
+
+<h1>Bienvenido al portal de noticias Blazor con API ASP.NET!</h1>
+<hr />
+
+@if (newsList != null)
+{
+    <div class="row">
+        @foreach (var news in newsList)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <img class="card-img-top" src="@news.imageUrl">
+                        <h5 class="card-title">@news.title</h5>
+                        <p class="card-text">@news.category</p>
+                        <p class="card-text">@news.description</p>
+                        <p class="card-text"><small class="text-muted">@news.publicationDate.ToShortDateString()</small></p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+else
+{
+    <p>Cargando noticias...</p>
+}
+
+
+
+
+
+@code {
+    private List<News> newsList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var apiUrl = "https://localhost:7081/api/News";
+        var response = await httpClient.GetAsync(apiUrl);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var jsonString = await response.Content.ReadAsStringAsync();
+            var allNews = JsonSerializer.Deserialize<List<News>>(jsonString);
+            newsList = allNews.OrderByDescending(n => n.publicationDate).Take(6).ToList();
+        }
+        else
+        {
+            // Manejar el error de respuesta de la API
+            // Puedes mostrar un mensaje de error o tomar alguna otra acción
+        }
+    }
+
+
+}

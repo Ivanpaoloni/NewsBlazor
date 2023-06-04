@@ -1,0 +1,60 @@
+﻿@page "/addnews"
+@using NewsBlazor.Models
+@using Microsoft.AspNetCore.Components
+
+@inject NavigationManager NavigationManager;
+
+<h3>Agregar noticia</h3>
+
+<div class="form-group">
+    <label for="title">Título</label>
+    <input type="text" class="form-control" id="title" @bind="@newNews.title">
+</div>
+
+<div class="form-group">
+    <label for="description">Descripción</label>
+    <textarea class="form-control" id="description" rows="3" @bind="@newNews.description"></textarea>
+</div>
+<div class="form-group">
+    <label for="description">Autor</label>
+    <textarea class="form-control" id="author" rows="3" @bind="@newNews.author"></textarea>
+</div>
+<div class="form-group">
+    <label for="description">Categoria</label>
+    <textarea class="form-control" id="category" rows="3" @bind="@newNews.category"></textarea>
+</div>
+<div class="form-group">
+    <label for="description">Imagen</label>
+    <textarea class="form-control" id="imageUrl" rows="3" @bind="@newNews.imageUrl"></textarea>
+</div>
+<div class="form-group">
+    <label for="description">contenido</label>
+    <textarea class="form-control" id="content" rows="3" @bind="@newNews.content"></textarea>
+</div>
+
+
+<br />
+
+<button class="btn btn-primary" @onclick="SubmitNews">Agregar</button>
+
+@code {
+    private News newNews = new News();
+
+    [Inject]
+    private HttpClient httpClient { get; set; }
+
+    private async Task SubmitNews()
+    {
+        var apiUrl = "https://localhost:7081/api/News";
+
+        var response = await httpClient.PostAsJsonAsync(apiUrl, newNews);
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+        }
+    }
+}
