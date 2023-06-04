@@ -1,0 +1,44 @@
+﻿@using NewsBlazor.Models
+@using NewsBlazor.Services;
+@inject NewsService newsService
+@inject NavigationManager NavigationManager
+
+
+@page "/viewnews/{id}"
+
+<div class="container">
+
+    @if (news == null)
+    {
+        <p>No se encontro la noticia.</p>
+    }
+    else
+    {
+        <h1 class="">@news.title</h1>
+        <hr />
+        <h5 class="">@news.description</h5>
+        <p class=""><small class="text-muted">@news.publicationDate.ToShortDateString()</small></p>
+        <hr />
+        <img class="" style="align-content: center;height: 500px;" src="@news.imageUrl"/>
+        <hr />
+        <p>@news.content</p>
+    }
+</div>
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private News news;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var id = NavigationManager.Uri.Split('/').Last();
+        news = await newsService.GetNewsById(id);
+        //if (!string.IsNullOrEmpty(Id))
+        //{
+        //    news = await newsService.GetNewsById(Id);
+        //}
+    }
+}

@@ -5,7 +5,7 @@
 
 @inject HttpClient httpClient
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Inicio</PageTitle>
 
 <h1>Bienvenido al portal de noticias Blazor con API ASP.NET!</h1>
 <hr />
@@ -23,6 +23,7 @@
                         <p class="card-text">@news.category</p>
                         <p class="card-text">@news.description</p>
                         <p class="card-text"><small class="text-muted">@news.publicationDate.ToShortDateString()</small></p>
+                        <a class="btn btn-primary " href="/viewnews/@news.id">Ver noticia</a>
                     </div>
                 </div>
             </div>
@@ -55,8 +56,7 @@ else
         }
         else
         {
-            // Manejar el error de respuesta de la API
-            // Puedes mostrar un mensaje de error o tomar alguna otra acción
+            // manejar el error
         }
     }
 
