@@ -1,0 +1,44 @@
+﻿@*@using Microsoft.AspNetCore.Components.Web
+
+<div class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="@NavMenuCssClass nav-scrollable collapse navbar-collapse" id="navbarNav" @onclick="ToggleNavMenu">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">Inicio</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/economia">Economia</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/policiales">Policiales</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/deportes">Deportes</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/sociedad">Sociedad</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/politica">Politica</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/internacionales">Internacionales</NavLink>
+            </li>
+        </ul>
+    </div>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}*@
