@@ -14,7 +14,7 @@
             <div class="row">
                 <!-- Blog entries-->
                 <div class="col-lg-8">
-                    @if (newsList != null)
+                    @if (newsList != null || categories != null)
                     {
                         <div class="card mb-4">
                     <a href="#!"><img class="card-img-top" src="@newsList.First().imageUrl" alt="..." /></a>
