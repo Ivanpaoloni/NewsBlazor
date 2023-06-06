@@ -1,0 +1,55 @@
+﻿@using NewsBlazor.Models
+@using NewsBlazor.Services;
+@inject NewsService newsService
+@inject CategoryService CategoryService
+@inject NavigationManager NavigationManager
+
+
+@page "/secciones/{name}"
+
+@if (newsList != null)
+{
+    <div class="row">
+        @foreach (var news in newsList)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <img class="card-img-top" src="@news.imageUrl">
+                        <h5 class="card-title">@news.title</h5>
+                        <p class="card-text">@news.categoryId</p>
+                        <p class="card-text">@news.description</p>
+                        <p class="card-text"><small class="text-muted">@news.categoryId, @news.publicationDate.ToShortDateString()</small></p>
+                        <a class="btn btn-primary " href="/viewnews/@news.id">Ver noticia</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+else
+{
+    <p>Cargando noticias...</p>
+}
+
+@code {
+    [Parameter]
+    public string name { get; set; }
+
+    private Category category;
+    private List<News> newsList;
+
+    //OnParametersSetAsync lo utilizo para poder cambiar de categoria de noticia sin tener que volver al indice.
+    protected override async Task OnParametersSetAsync()
+    {
+        var name = NavigationManager.Uri.Split('/').Last();
+        var category = await CategoryService.GetByName(name);
+        newsList = await newsService.GetNewsByCategory(category.id);
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+}

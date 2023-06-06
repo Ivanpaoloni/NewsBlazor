@@ -2,10 +2,17 @@
 using NewsBlazor.Models;
 using NewsBlazor.Pages;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
 
 namespace NewsBlazor.Services
 {
-    public class NewsService
+    public interface INewsService
+    {
+        Task<List<News>> GetNewsByCategory(int id);
+        Task<News> GetNewsById(string id);
+    }
+    public class NewsService : INewsService
     {
         private readonly HttpClient httpClient;
 
@@ -33,7 +40,38 @@ namespace NewsBlazor.Services
             {
                 throw new Exception("Error al obtener la noticia.");
             }
+        }        
+        public async Task<List<News>> GetNewsByCategory(int id)
+        {
 
+            List<News> newsCategorized;
+            var apiUrl = $"https://localhost:7081/api/News/";
+            var response = await httpClient.GetAsync(apiUrl);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var list = new List<News>();
+                var jsonString = await response.Content.ReadAsStringAsync();
+                var allNews = JsonSerializer.Deserialize<List<News>>(jsonString);
+                foreach (var news in allNews)
+                {
+                    if (news.categoryId == id)
+                    {
+                        list.Add(news);
+                    }
+                }
+                newsCategorized = list.OrderByDescending(n => n.publicationDate).Take(6).ToList();
+
+                return newsCategorized;
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+            else
+            {
+                throw new Exception("Error al obtener la noticia.");
+            }
         }
     }
 }
