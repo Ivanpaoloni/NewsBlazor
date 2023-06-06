@@ -1,14 +1,151 @@
 ﻿@page "/"
-@using System.Net.Http
-@using System.Text.Json
+@using System.Net.Http;
+@using System.Text.Json;
 @using NewsBlazor.Models;
+@using NewsBlazor.Services;
 
 @inject HttpClient httpClient
 
 <PageTitle>Inicio</PageTitle>
 
-<h1>Bienvenido al portal de noticias Blazor con API ASP.NET!</h1>
-<hr />
+<!-- Responsive navbar-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-greendark">
+            <div class="container">
+                <a class="navbar-brand" href="#!">Noticias Blazor</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="">Inicio</a></li>
+                        @if(categories != null)
+                        {
+                            @foreach(var category in categories)
+                            {
+                                <li class="nav-item"><a class="nav-link" href="/@category.name">@category.name</a></li>
+                        
+                            }
+                    
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page header with logo and tagline-->
+        <header class="bg-light border-bottom mb-4">
+            <div class="container">
+                <div class="text-center my-5">
+                    <h1 class="fw-bolder">Bienvenido a noticias Blazor!</h1>
+                    <p class="lead mb-0">Las noticias presentadas en Blazor Server App mediante API REST ASP.NET</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page content-->
+        <div class="container">
+            <div class="row">
+                <!-- Blog entries-->
+                <div class="col-lg-8">
+                    @if (newsList != null)
+                    {
+                        <div class="card mb-4">
+                    <a href="#!"><img class="card-img-top" src="@newsList.First().imageUrl" alt="..." /></a>
+                            <div class="card-body">
+                                <div class="small text-muted">@newsList.First().publicationDate.ToShortDateString()</div>
+                                <h2 class="card-title">@newsList.First().title</h2>
+                        <p class="card-text">@newsList.First().description</p>
+                        <a class="btn btn-primary" href="/viewnews/@newsList.First().id">Ver noticia completa →</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="row">
+                                <div class="">
+                                    @foreach (var news in newsList)
+                                    {
+                                <div class="card mb-4">
+                                            <a href="#!"><img class="card-img-top" src="@news.imageUrl" alt="..." /></a>
+                                            <div class="card-body">
+                                                <div class="small text-muted">@news.publicationDate.ToShortDateString()</div>
+                                                <h2 class="card-title">@news.title</h2>
+                                                <p class="card-text">@news.description</p>
+                                                <a class="btn btn-primary" href="/viewnews/@news.id">Ver noticia completa →</a>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+            
+                    }
+                <!-- Pagination-->
+                <nav aria-label="Pagination">
+                    <hr class="my-0" />
+                    <ul class="pagination justify-content-center my-4">
+                        <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Newer</a></li>
+                        <li class="page-item active" aria-current="page"><a class="page-link" href="#!">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#!">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#!">3</a></li>
+                        <li class="page-item disabled"><a class="page-link" href="#!">...</a></li>
+                        <li class="page-item"><a class="page-link" href="#!">15</a></li>
+                        <li class="page-item"><a class="page-link" href="#!">Older</a></li>
+                    </ul>
+                </nav>
+            </div>
+                <!-- Side widgets-->
+                <div class="col-lg-4">
+                    <!-- Search widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">Search</div>
+                        <div class="card-body">
+                            <div class="input-group">
+                                <input class="form-control" type="text" placeholder="Enter search term..." aria-label="Enter search term..." aria-describedby="button-search" />
+                                <button class="btn btn-primary" id="button-search" type="button">Go!</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Categories widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">Categories</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled mb-0">
+                                        <li><a href="#!">Web Design</a></li>
+                                        <li><a href="#!">HTML</a></li>
+                                        <li><a href="#!">Freebies</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled mb-0">
+                                        <li><a href="#!">JavaScript</a></li>
+                                        <li><a href="#!">CSS</a></li>
+                                        <li><a href="#!">Tutorials</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Side widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">Clima</div>
+                        <div class="card-body">
+                            @*@if(weatherPrint != null)
+                            {
+                                <p>Ciudad: @weatherPrint.cityName</p>
+                                <p>Temperatura: @weatherPrint.temp°</p>
+                                <p>Humedad: @weatherPrint.humidity%</p>
+                            }*@
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p></div>
+        </footer>
 
 @if (newsList != null)
 {
@@ -20,9 +157,9 @@
                     <div class="card-body">
                         <img class="card-img-top" src="@news.imageUrl">
                         <h5 class="card-title">@news.title</h5>
-                        <p class="card-text">@news.category</p>
+                        <p class="card-text">@news.categoryId</p>
                         <p class="card-text">@news.description</p>
-                        <p class="card-text"><small class="text-muted">@news.category, @news.publicationDate.ToShortDateString()</small></p>
+                        <p class="card-text"><small class="text-muted">@news.categoryId, @news.publicationDate.ToShortDateString()</small></p>
                         <a class="btn btn-primary " href="/viewnews/@news.id">Ver noticia</a>
                     </div>
                 </div>
@@ -42,12 +179,12 @@ else
 
 @code {
     private List<News> newsList;
+    private List<Category> categories;
 
     protected override async Task OnInitializedAsync()
     {
         var apiUrl = "https://localhost:7081/api/News";
         var response = await httpClient.GetAsync(apiUrl);
-
         if (response.IsSuccessStatusCode)
         {
             var jsonString = await response.Content.ReadAsStringAsync();
@@ -58,7 +195,25 @@ else
         {
             // manejar el error
         }
+
+        //get Categories for navbar.
+        var apiUrlCategory = "https://localhost:7081/api/category";
+        var responseCategory = await httpClient.GetAsync(apiUrlCategory);
+
+        if (responseCategory.IsSuccessStatusCode)
+        {
+            var jsonStringCategories = await responseCategory.Content.ReadAsStringAsync();
+            var allCategories = JsonSerializer.Deserialize<List<Category>>(jsonStringCategories);
+            categories = allCategories.ToList();
+        }
+        else
+        {
+            // manejar el error
+        }
+
+        
     }
+
 
 
 }

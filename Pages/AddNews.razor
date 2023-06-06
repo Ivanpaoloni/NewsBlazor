@@ -17,11 +17,11 @@
 </div>
 <div class="form-group">
     <label for="description">Autor</label>
-    <textarea class="form-control" id="author" rows="3" @bind="@newNews.author"></textarea>
+    <textarea class="form-control" id="author" rows="3" @bind="@newNews.authorId"></textarea>
 </div>
 <div class="form-group">
     <label for="description">Categoria</label>
-    <textarea class="form-control" id="category" rows="3" @bind="@newNews.category"></textarea>
+    <textarea class="form-control" id="category" rows="3" @bind="@newNews.categoryId"></textarea>
 </div>
 <div class="form-group">
     <label for="description">Imagen</label>
@@ -50,7 +50,7 @@
         var response = await httpClient.PostAsJsonAsync(apiUrl, newNews);
         if (response.IsSuccessStatusCode)
         {
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/addnews");
         }
         else
         {

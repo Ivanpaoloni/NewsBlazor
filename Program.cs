@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<NewsService>();
+builder.Services.AddSingleton<CategoryService>();
 
 builder.Services.AddHttpClient();
 
