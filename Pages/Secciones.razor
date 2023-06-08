@@ -1,6 +1,6 @@
 ﻿@using NewsBlazor.Models
 @using NewsBlazor.Services;
-@inject NewsService newsService
+@inject NewsService NewsService
 @inject CategoryService CategoryService
 @inject NavigationManager NavigationManager
 
@@ -51,13 +51,13 @@ else
     //OnParametersSetAsync lo utilizo para poder cambiar de categoria de noticia sin tener que volver al indice.
     protected override async Task OnParametersSetAsync()
     {
+        //var name = NavigationManager.Uri.Split('/').Last();
+        //var category = await CategoryService.GetByName(name);
+        //newsList = await NewsService.GetNewsByCategory(category.id);
         var name = NavigationManager.Uri.Split('/').Last();
         var category = await CategoryService.GetByName(name);
-        newsList = await newsService.GetNewsByCategory(category.id);
+        var newsList = await NewsService.GetNewsByCategory(category.id);
         StateHasChanged();
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-    }
 }

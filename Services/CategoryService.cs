@@ -43,18 +43,21 @@ namespace NewsBlazor.Services
 
         public async Task<Category> GetByName(string name)
         {
-            var categorySelected = new Category() { };
-            var allCategories = await Get();
-            categorySelected = allCategories.FirstOrDefault(c => c.name == name);
-            if (categorySelected.name == name)            
+            var apiUrl = $"https://localhost:7081/api/category/name/{name}";
+            var response = await httpClient.GetAsync(apiUrl);
+            if (response.IsSuccessStatusCode)
             {
-                return categorySelected;
+                var category = await httpClient.GetFromJsonAsync<Category>(apiUrl);
+                return category;
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
             }
             else
             {
                 throw new Exception("Error al obtener la categoria.");
             }
-
         }
     }
 }
