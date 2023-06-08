@@ -51,12 +51,10 @@ else
     //OnParametersSetAsync lo utilizo para poder cambiar de categoria de noticia sin tener que volver al indice.
     protected override async Task OnParametersSetAsync()
     {
-        //var name = NavigationManager.Uri.Split('/').Last();
-        //var category = await CategoryService.GetByName(name);
-        //newsList = await NewsService.GetNewsByCategory(category.id);
         var name = NavigationManager.Uri.Split('/').Last();
         var category = await CategoryService.GetByName(name);
-        var newsList = await NewsService.GetNewsByCategory(category.id);
+        newsList = await NewsService.GetNewsByCategory(category.id);
+        
         StateHasChanged();
     }
 
