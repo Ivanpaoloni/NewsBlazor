@@ -1,4 +1,4 @@
-(EN DESARROLLO)
+ <h2> (EN PROGRESO)</h2>
 <h1>NewsBlazor -  Blazor ServerApp - API REST ASP.NET</h1>
 
 *Template descargado de https://startbootstrap.com/, personalizado a gusto.
