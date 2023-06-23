@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NewsBlazor.Models;
+using System.ComponentModel;
 using System.Net;
 using System.Text.Json;
 
@@ -8,6 +9,7 @@ namespace NewsBlazor.Services
     public interface ICategoryService
     {
         Task<List<Category>> Get();
+        Task<Category> GetById(int id);
         Task<Category> GetByName(string name);
     }
     public class CategoryService : ICategoryService
@@ -30,6 +32,25 @@ namespace NewsBlazor.Services
                 var jsonString = await response.Content.ReadAsStringAsync();
                 var allCategories = JsonSerializer.Deserialize<List<Category>>(jsonString);
                 return allCategories;
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+            else
+            {
+                throw new Exception("Error al obtener la categoria.");
+            }
+        }
+
+        public async Task<Category> GetById(int id)
+        {
+            var apiUrl = $"https://localhost:7081/api/category/{id}";
+            var response = await httpClient.GetAsync(apiUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                var category = await httpClient.GetFromJsonAsync<Category>(apiUrl);
+                return category;
             }
             else if (response.StatusCode == HttpStatusCode.NotFound)
             {

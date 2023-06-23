@@ -1,6 +1,7 @@
 ﻿@using NewsBlazor.Models
 @using NewsBlazor.Services;
 @inject NewsService newsService
+@inject CategoryService categoryService
 @inject NavigationManager NavigationManager
 
 
@@ -10,19 +11,29 @@
 
     @if (news == null)
     {
-        <p>No se encontro la noticia.</p>
-        <a class="btn btn-primary" href="/#">Volver al inicio</a>
+        <div class="container text-center pb-4">
+            <p>No se encontro la noticia.</p>
+            <a class="btn btn-primary" href="/#">Volver al inicio</a>
+
+
+        </div>
     }
     else
     {
-        <h1 class="">@news.title</h1>
-        <hr />
-        <h5 class="">@news.description</h5>
-        <p class=""><small class="text-muted"> @news.categoryId, @news.publicationDate.ToShortDateString()</small></p>
-        <hr />
-        <img class="" style="align-content: center;height: 500px;" src="@news.imageUrl"/>
-        <hr />
-        <p>@news.content</p>
+        <div class="container  pb-4">
+            <h1 class="text-center">@news.title</h1>
+            <hr />
+            <h5 class="">@news.description</h5>
+            <p class="">
+                <small class="text-muted">
+                    <a class="text-muted" href="/secciones/@category.name">@category.name</a>, @news.publicationDate.ToShortDateString()
+                </small>
+            </p>
+            <hr />
+            <img class="img-fluid" src="@news.imageUrl" />
+            <hr />
+            <p>@news.content</p>
+        </div>
     }
 </div>
 
@@ -32,6 +43,7 @@
     public string Id { get; set; }
 
     private News news;
+    private Category category;
 
     protected override async Task OnInitializedAsync()
     {
@@ -41,5 +53,7 @@
         //{
         //    news = await newsService.GetNewsById(Id);
         //}
+
+        category = await categoryService.GetById(news.categoryId);
     }
 }

@@ -31,7 +31,7 @@
                                     @foreach (var news in newsList)
                                     {
                                 <div class="card mb-4">
-                                            <a href="#!"><img class="card-img-top" src="@news.imageUrl" alt="..." /></a>
+                                    <a href="/viewnews/@news.id"><img class="card-img-top" src="@news.imageUrl" alt="..." /></a>
                                             <div class="card-body">
                                                 <div class="small text-muted">@news.publicationDate.ToShortDateString()</div>
                                                 <h2 class="card-title">@news.title</h2>
@@ -160,7 +160,7 @@ else
         }
         else
         {
-            newsList = null;
+            newsList = new List<News> { };
         }
 
         //get Categories for navbar.
@@ -175,7 +175,7 @@ else
         }
         else
         {
-            // manejar el error
+            categories = new List<Category> { };
         }
 
         
