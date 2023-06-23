@@ -6,6 +6,7 @@
 
 
 @inject HttpClient httpClient
+@inject NewsService newsService
 
 <PageTitle>Inicio</PageTitle>
 
@@ -33,7 +34,8 @@
                                 <div class="card mb-4">
                                     <a href="/viewnews/@news.id"><img class="card-img-top" src="@news.imageUrl" alt="..." /></a>
                                             <div class="card-body">
-                                                <div class="small text-muted">@news.publicationDate.ToShortDateString()</div>
+                                        <div class="small text-muted"><a class="text-muted" href="/secciones/@news.category.name">@news.category.name</a>
+                                            , @news.author.name, @news.publicationDate.ToShortDateString()</div>
                                                 <h2 class="card-title">@news.title</h2>
                                                 <p class="card-text">@news.description</p>
                                         <a class="btn btn-danger" href="/viewnews/@news.id">Ver noticia completa →</a>
@@ -150,18 +152,20 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var apiUrl = "https://localhost:7081/api/News";
-        var response = await httpClient.GetAsync(apiUrl);
-        if (response.IsSuccessStatusCode)
-        {
-            var jsonString = await response.Content.ReadAsStringAsync();
-            var allNews = JsonSerializer.Deserialize<List<News>>(jsonString);
-            newsList = allNews.OrderByDescending(n => n.publicationDate).Take(6).ToList();
-        }
-        else
-        {
-            newsList = new List<News> { };
-        }
+        //var apiUrl = "https://localhost:7081/api/News";
+        //var response = await httpClient.GetAsync(apiUrl);
+        //if (response.IsSuccessStatusCode)
+        //{
+        //    var jsonString = await response.Content.ReadAsStringAsync();
+        //    var allNews = JsonSerializer.Deserialize<List<News>>(jsonString);
+        //    newsList = allNews.OrderByDescending(n => n.publicationDate).Take(6).ToList();
+        //}
+        //else
+        //{
+        //    newsList = new List<News> { };
+        //}
+
+        newsList = await newsService.Get();
 
         //get Categories for navbar.
         var apiUrlCategory = "https://localhost:7081/api/category";

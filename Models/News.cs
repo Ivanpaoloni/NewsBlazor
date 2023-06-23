@@ -10,5 +10,7 @@
         public DateTime publicationDate { get; set; }
         public string imageUrl { get; set; }
         public string content { get; set; }
+        public Category category { get; set; }
+        public Author author { get; set; }
     }
 }

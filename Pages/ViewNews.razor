@@ -26,7 +26,7 @@
             <h5 class="">@news.description</h5>
             <p class="">
                 <small class="text-muted">
-                    <a class="text-muted" href="/secciones/@category.name">@category.name</a>, @news.publicationDate.ToShortDateString()
+                    <a class="text-muted" href="/secciones/@news.category.name">@news.category.name</a>, @news.author.name, @news.publicationDate.ToShortDateString()
                 </small>
             </p>
             <hr />
@@ -43,17 +43,11 @@
     public string Id { get; set; }
 
     private News news;
-    private Category category;
 
     protected override async Task OnInitializedAsync()
     {
         var id = NavigationManager.Uri.Split('/').Last();
         news = await newsService.GetNewsById(id);
-        //if (!string.IsNullOrEmpty(Id))
-        //{
-        //    news = await newsService.GetNewsById(Id);
-        //}
 
-        category = await categoryService.GetById(news.categoryId);
     }
 }

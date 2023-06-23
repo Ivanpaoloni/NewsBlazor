@@ -9,6 +9,7 @@ namespace NewsBlazor.Services
 {
     public interface INewsService
     {
+        Task<List<News>> Get();
         Task<List<News>> GetNewsByCategory(int category);
         Task<News> GetNewsById(string id);
     }
@@ -19,6 +20,23 @@ namespace NewsBlazor.Services
         public NewsService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
+        }
+
+        public async Task<List<News>> Get()
+        {
+            var apiUrl = "https://localhost:7081/api/News";
+            var response = await httpClient.GetAsync(apiUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+                var allNews = JsonSerializer.Deserialize<List<News>>(jsonString);
+                var newsList = allNews.OrderByDescending(n => n.publicationDate).Take(6).ToList();
+                return newsList;
+            }
+            else
+            {
+                throw new Exception("Error al obtener las noticias.");
+            }
         }
 
         public async Task<News> GetNewsById(string id)
