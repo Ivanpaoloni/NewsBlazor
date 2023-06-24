@@ -35,7 +35,8 @@ namespace NewsBlazor.Services
             }
             else
             {
-                throw new Exception("Error al obtener las noticias.");
+                return new List<News>();
+                //throw new Exception("Error al obtener las noticias.");
             }
         }
 

@@ -1,0 +1,82 @@
+﻿@page "/admin/addnews"
+@using NewsBlazor.Models
+@using Microsoft.AspNetCore.Components
+@using NewsBlazor.Services;
+
+@inject NavigationManager NavigationManager;
+@inject CategoryService categoryService
+
+<div class="container-lg">
+    <h2 class="text-center">Agregar noticia</h2>
+
+    <div class="form-group">
+        <label for="title">Título</label>
+        <input type="text" class="form-control" id="title" @bind="@newNews.title">
+    </div>
+
+    <div class="form-group">
+        <label for="description">Descripción</label>
+        <textarea class="form-control" id="description" rows="3" @bind="@newNews.description"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="description">Autor</label>
+        <textarea class="form-control" id="author" rows="3" @bind="@newNews.authorId"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="description">Categoria</label>
+        <select id="categorySelect" class="form-control" @bind="selectedCategoryId">
+            <option value="">Seleccione una categoría</option>
+            @if(categories != null){
+                @foreach (var category in categories)
+                {
+                    <option value="@category.id">@category.name</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="description">Imagen</label>
+        <textarea class="form-control" id="imageUrl" rows="3" @bind="@newNews.imageUrl"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="description">contenido</label>
+        <textarea class="form-control" id="content" rows="3" @bind="@newNews.content"></textarea>
+    </div>
+    <br />
+    <button class="btn btn-primary" @onclick="SubmitNews">Agregar</button>
+    <br />
+    <br />
+</div>
+
+@code {
+    private News newNews = new News();
+    private int selectedCategoryId;
+
+    [Inject]
+    private HttpClient httpClient { get; set; }
+
+    private List<Category> categories;
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await categoryService.Get();
+    }
+
+
+
+    private async Task SubmitNews()
+    {
+        newNews.categoryId = selectedCategoryId;
+        var apiUrl = "https://localhost:7081/api/News";
+
+        var response = await httpClient.PostAsJsonAsync(apiUrl, newNews);
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+        }
+    }
+}

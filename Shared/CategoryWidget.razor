@@ -1,0 +1,38 @@
+﻿@using System.Net.Http;
+@using System.Text.Json;
+@using NewsBlazor.Models;
+@using NewsBlazor.Services;
+
+@inject CategoryService categoryService
+
+<div class="card mb-4">
+    <div class="card-header">
+        Categorias
+    </div>
+    <div class="container">
+        <div class="row">
+            @if (categories != null)
+            {
+                foreach (var cat in categories)
+                {
+                <div class="col">
+                    <a href="/secciones/@cat.name">@cat.name</a>
+                </div>  
+                }
+            }
+        </div>
+    </div>
+</div>
+@code {
+
+    private List<Category> categories;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            categories = await categoryService.Get();
+            StateHasChanged();
+        }
+    }
+}

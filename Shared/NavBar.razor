@@ -4,6 +4,7 @@
 @using NewsBlazor.Services;
 
 @inject HttpClient httpClient
+@inject CategoryService categoryService
 
 
 <!-- Responsive navbar-->
@@ -35,24 +36,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //get Categories for navbar.
-        var apiUrlCategory = "https://localhost:7081/api/category";
-        var responseCategory = await httpClient.GetAsync(apiUrlCategory);
-
-        if (responseCategory.IsSuccessStatusCode)
-        {
-            var jsonStringCategories = await responseCategory.Content.ReadAsStringAsync();
-            var allCategories = JsonSerializer.Deserialize<List<Category>>(jsonStringCategories);
-            categories = allCategories.ToList();
-        }
-        else
-        {
-            // manejar el error
-        }
-
-
+        categories = await categoryService.Get();
     }
-
-
-
 }

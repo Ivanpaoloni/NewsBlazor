@@ -7,6 +7,7 @@
 
 @inject HttpClient httpClient
 @inject NewsService newsService
+@inject CategoryService categoryService
 @inject WeatherService WeatherService
 @inject IJSRuntime JSRuntime
 
@@ -17,7 +18,7 @@
             <div class="row">
                 <!-- Blog entries-->
                 <div class="col-lg-8">
-                    @if (newsList != null || categories != null)
+                    @if (newsList != null)
                     {
                         <div class="row">
                             <div class="row">
@@ -63,108 +64,20 @@
             </div>
                 <!-- Side widgets-->
                 <div class="col-lg-4">
-                    <!-- Search widget-->
-                    <div class="card mb-4">
-                        <div class="card-header">Search</div>
-                        <div class="card-body">
-                            <div class="input-group">
-                        <input class="form-control" type="text" placeholder="Buscar una noticia ..." aria-label="Buscar una noticia ..." aria-describedby="button-search" />
-                                <button class="btn btn-danger" id="button-search" type="button">Ir</button>
-                            </div>
-                        </div>
-                    </div>
+                    <SearchWidget/>
                     <!-- Categories widget-->
-                    <div class="card mb-4">
-                        <div class="card-header">Categorias</div>
-                    <div class="container">
-                        <div class="row">
-                            @if (categories != null)
-                            {
-                                foreach (var cat in categories)
-                                {
-                                <div class="col">
-                                    <a href="/secciones/@cat.name">@cat.name</a>
-                                </div>  
-                                }
-                            }
-                        </div>
-                    </div>
-
-                    </div>
+                    <CategoryWidget/>
                     <!-- Weather widget-->
-                    <div class="card mb-4">
-                        <div class="card-header">Clima</div>
-                            <div class="card-body">
-                                @if(weatherData != null)
-                                {
-                        <p>Ciudad: @weatherData.Name</p>
-                        <p>Temperatura: @weatherData.Main.Temp °C</p>
-                                }
-
-                            </div>
-                        </div>
-                    </div>
+                    <WeatherWidget/>
                 </div>
             </div>
-       
+        </div>
 
 @code {
     private List<News> newsList;
-    private List<Category> categories;
-    private WeatherData weatherData;
 
     protected override async Task OnInitializedAsync()
     {
-
         newsList = await newsService.Get();
-        //get Categories for navbar.
-        var apiUrlCategory = "https://localhost:7081/api/category";
-        var responseCategory = await httpClient.GetAsync(apiUrlCategory);
-
-        if (responseCategory.IsSuccessStatusCode)
-        {
-            var jsonStringCategories = await responseCategory.Content.ReadAsStringAsync();
-            var allCategories = JsonSerializer.Deserialize<List<Category>>(jsonStringCategories);
-            categories = allCategories.ToList();
-        }
-        else
-        {
-            categories = new List<Category> { };
-        }  
     }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await GetWeatherData();
-            StateHasChanged();
-        }
-    }
-
-    // funcion para obtener el clima y la localizacion.
-    private async Task GetWeatherData()
-    {
-       
-        
-        var latitude = -31.756278;
-        var longitude = -60.475150;
-
-        // Hacer algo con la latitud y longitud obtenidas
-        var apiKey = "cb4b62d3cd1ba79ac4bb8f75805eaa14";
-        weatherData = await WeatherService.GetWeatherDataByCoordinatesAsync(latitude, longitude, apiKey);
-        
-        
-    }
-    public class GeolocationPosition
-    {
-        public GeolocationCoordinates Coords { get; set; }
-    }
-    public class GeolocationCoordinates
-    {
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-    }
-
-    
 }

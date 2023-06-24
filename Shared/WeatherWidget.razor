@@ -1,0 +1,52 @@
+﻿@using System.Net.Http;
+@using NewsBlazor.Models;
+@using NewsBlazor.Services;
+@using Microsoft.JSInterop;
+
+@inject HttpClient httpClient
+@inject WeatherService WeatherService
+@inject IJSRuntime JSRuntime
+
+
+<div class="card mb-4">
+    <div class="card-header">Clima</div>
+        <div class="card-body">
+            @if(weatherData != null)
+            {
+    <p>Ciudad: @weatherData.Name</p>
+    <p>Temperatura: @weatherData.Main.Temp °C</p>
+            }
+
+    </div>
+</div>
+
+@code {
+
+    private WeatherData weatherData;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await GetWeatherData();
+            StateHasChanged();
+        }
+    }
+    // funcion para obtener el clima y la localizacion.
+    private async Task GetWeatherData()
+    {
+        var latitude = -31.756278;
+        var longitude = -60.475150;
+        var apiKey = "cb4b62d3cd1ba79ac4bb8f75805eaa14";
+        weatherData = await WeatherService.GetWeatherDataByCoordinatesAsync(latitude, longitude, apiKey);
+    }
+    public class GeolocationPosition
+    {
+        public GeolocationCoordinates Coords { get; set; }
+    }
+    public class GeolocationCoordinates
+    {
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+    }
+}

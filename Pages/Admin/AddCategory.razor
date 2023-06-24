@@ -1,0 +1,29 @@
+﻿@page "/admin/addcategory"
+@using NewsBlazor.Models
+@using Microsoft.AspNetCore.Components
+@using NewsBlazor.Services;
+@inject NavigationManager NavigationManager;
+@inject CategoryService categoryService
+
+<div class="container-lg">
+    <h2 class="text-center">Agregar categoria</h2>
+
+    <div class="form-group">
+        <label for="description">Nombre de categoria</label>
+        <textarea class="form-control" id="name" rows="1" @bind="@category.name"></textarea>
+    </div>
+    <br />
+    <button class="btn btn-primary" @onclick="SubmitCategory">Agregar</button>
+    <br />
+    <br />
+</div>
+
+@code {
+    private Category category = new Category();
+
+    private async Task SubmitCategory()
+    {
+        await categoryService.Create(category);
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+    }
+}

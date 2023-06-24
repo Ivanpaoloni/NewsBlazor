@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc;
 using NewsBlazor.Models;
+using NewsBlazor.Pages;
 using System.ComponentModel;
 using System.Net;
 using System.Text.Json;
@@ -11,6 +13,7 @@ namespace NewsBlazor.Services
         Task<List<Category>> Get();
         Task<Category> GetById(int id);
         Task<Category> GetByName(string name);
+        Task Create(Category category);
     }
     public class CategoryService : ICategoryService
     {
@@ -19,6 +22,17 @@ namespace NewsBlazor.Services
         public CategoryService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
+        }
+
+        public async Task Create(Category category)
+        {
+            var apiUrl = "https://localhost:7081/api/category";
+
+            var response = await httpClient.PostAsJsonAsync(apiUrl, category);
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+            }
         }
 
         public async Task<List<Category>> Get()
@@ -39,7 +53,8 @@ namespace NewsBlazor.Services
             }
             else
             {
-                throw new Exception("Error al obtener la categoria.");
+                return new List<Category>();
+                //throw new Exception("Error al obtener la categoria.");
             }
         }
 
