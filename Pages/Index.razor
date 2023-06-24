@@ -10,7 +10,6 @@
 @inject WeatherService WeatherService
 @inject IJSRuntime JSRuntime
 
-
 <PageTitle>Inicio</PageTitle>
 
         <!-- Page content-->
@@ -116,7 +115,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        
+
         newsList = await newsService.Get();
         //get Categories for navbar.
         var apiUrlCategory = "https://localhost:7081/api/category";
@@ -166,4 +165,6 @@
         public double Latitude { get; set; }
         public double Longitude { get; set; }
     }
+
+    
 }
