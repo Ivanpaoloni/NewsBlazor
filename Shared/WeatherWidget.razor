@@ -6,6 +6,7 @@
 @inject HttpClient httpClient
 @inject WeatherService WeatherService
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
 
 
 <div class="card mb-4">
@@ -35,10 +36,13 @@
     // funcion para obtener el clima y la localizacion.
     private async Task GetWeatherData()
     {
+
         var latitude = -31.756278;
         var longitude = -60.475150;
         var apiKey = "cb4b62d3cd1ba79ac4bb8f75805eaa14";
+
         weatherData = await WeatherService.GetWeatherDataByCoordinatesAsync(latitude, longitude, apiKey);
+
     }
     public class GeolocationPosition
     {
@@ -49,4 +53,5 @@
         public double Latitude { get; set; }
         public double Longitude { get; set; }
     }
+
 }
