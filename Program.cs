@@ -2,7 +2,10 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using NewsBlazor.Services;
 using System.Net.Http;
-
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +14,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<NewsService>();
 builder.Services.AddSingleton<CategoryService>();
+
+builder.Services.AddScoped<WeatherService>();
 
 builder.Services.AddHttpClient();
 

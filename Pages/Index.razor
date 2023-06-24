@@ -3,10 +3,13 @@
 @using System.Text.Json;
 @using NewsBlazor.Models;
 @using NewsBlazor.Services;
-
+@using Microsoft.JSInterop;
 
 @inject HttpClient httpClient
 @inject NewsService newsService
+@inject WeatherService WeatherService
+@inject IJSRuntime JSRuntime
+
 
 <PageTitle>Inicio</PageTitle>
 
@@ -17,15 +20,6 @@
                 <div class="col-lg-8">
                     @if (newsList != null || categories != null)
                     {
-                        @*<div class="card mb-4">
-                            <a href="#!"><img class="card-img-top" src="@newsList.First().imageUrl" alt="..." /></a>
-                            <div class="card-body">
-                                <div class="small text-muted">@newsList.First().publicationDate.ToShortDateString()</div>
-                                <h2 class="card-title">@newsList.First().title</h2>
-                            <p class="card-text">@newsList.First().description</p>
-                            <a class="btn btn-danger" href="/viewnews/@newsList.First().id">Ver noticia completa →</a>
-                            </div>
-                        </div>*@
                         <div class="row">
                             <div class="row">
                                 <div class="">
@@ -98,75 +92,32 @@
                     </div>
 
                     </div>
-                    <!-- Side widget-->
+                    <!-- Weather widget-->
                     <div class="card mb-4">
                         <div class="card-header">Clima</div>
                             <div class="card-body">
-                                @*@if(weatherPrint != null)
+                                @if(weatherData != null)
                                 {
-                                    <p>Ciudad: @weatherPrint.cityName</p>
-                                    <p>Temperatura: @weatherPrint.temp°</p>
-                                    <p>Humedad: @weatherPrint.humidity%</p>
-                                }*@
+                        <p>Ciudad: @weatherData.Name</p>
+                        <p>Temperatura: @weatherData.Main.Temp °C</p>
+                                }
 
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        
-@*
-@if (newsList != null)
-{
-    <div class="row">
-        @foreach (var news in newsList)
-        {
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <img class="card-img-top" src="@news.imageUrl">
-                        <h5 class="card-title">@news.title</h5>
-                        <p class="card-text">@news.categoryId</p>
-                        <p class="card-text">@news.description</p>
-                        <p class="card-text"><small class="text-muted">@news.categoryId, @news.publicationDate.ToShortDateString()</small></p>
-                        <a class="btn btn-primary " href="/viewnews/@news.id">Ver noticia</a>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-}
-
-else
-{
-    <p>Cargando noticias...</p>
-}*@
-
-
-
-
+       
 
 @code {
     private List<News> newsList;
     private List<Category> categories;
+    private WeatherData weatherData;
 
     protected override async Task OnInitializedAsync()
     {
-        //var apiUrl = "https://localhost:7081/api/News";
-        //var response = await httpClient.GetAsync(apiUrl);
-        //if (response.IsSuccessStatusCode)
-        //{
-        //    var jsonString = await response.Content.ReadAsStringAsync();
-        //    var allNews = JsonSerializer.Deserialize<List<News>>(jsonString);
-        //    newsList = allNews.OrderByDescending(n => n.publicationDate).Take(6).ToList();
-        //}
-        //else
-        //{
-        //    newsList = new List<News> { };
-        //}
-
+        
         newsList = await newsService.Get();
-
         //get Categories for navbar.
         var apiUrlCategory = "https://localhost:7081/api/category";
         var responseCategory = await httpClient.GetAsync(apiUrlCategory);
@@ -180,11 +131,39 @@ else
         else
         {
             categories = new List<Category> { };
-        }
-
-        
+        }  
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await GetWeatherData();
+            StateHasChanged();
+        }
+    }
 
+    // funcion para obtener el clima y la localizacion.
+    private async Task GetWeatherData()
+    {
+       
+        
+        var latitude = -31.756278;
+        var longitude = -60.475150;
 
+        // Hacer algo con la latitud y longitud obtenidas
+        var apiKey = "cb4b62d3cd1ba79ac4bb8f75805eaa14";
+        weatherData = await WeatherService.GetWeatherDataByCoordinatesAsync(latitude, longitude, apiKey);
+        
+        
+    }
+    public class GeolocationPosition
+    {
+        public GeolocationCoordinates Coords { get; set; }
+    }
+    public class GeolocationCoordinates
+    {
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+    }
 }
