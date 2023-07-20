@@ -14,8 +14,15 @@ public class WeatherService
 
     public async Task<WeatherData> GetWeatherDataByCoordinatesAsync(double latitude, double longitude, string apiKey)
     {
-        string url = $"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={apiKey}&units=metric";
-        return await _httpClient.GetFromJsonAsync<WeatherData>(url);
+        try
+        {
+            string url = $"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={apiKey}&units=metric";
+            return await _httpClient.GetFromJsonAsync<WeatherData>(url);
+        }
+        catch (Exception ex) 
+        {
+            return null;
+        }
     }
 }
 

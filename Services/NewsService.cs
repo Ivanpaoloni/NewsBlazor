@@ -24,64 +24,88 @@ namespace NewsBlazor.Services
 
         public async Task<List<News>> Get()
         {
-            var apiUrl = "https://localhost:7081/api/News";
-            var response = await httpClient.GetAsync(apiUrl);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var jsonString = await response.Content.ReadAsStringAsync();
-                var allNews = JsonSerializer.Deserialize<List<News>>(jsonString);
-                var newsList = allNews.OrderByDescending(n => n.publicationDate).Take(6).ToList();
-                return newsList;
+                var apiUrl = "https://localhost:7081/api/News";
+                var response = await httpClient.GetAsync(apiUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var allNews = JsonSerializer.Deserialize<List<News>>(jsonString);
+                    var newsList = allNews.OrderByDescending(n => n.publicationDate).Take(6).ToList();
+                    return newsList;
+                }
+                else
+                {
+                    return new List<News>();
+                }
+
             }
-            else
+            catch (Exception ex)
             {
                 return new List<News>();
-                //throw new Exception("Error al obtener las noticias.");
             }
+
         }
 
         public async Task<News> GetNewsById(string id)
         {
-
-            var apiUrl = $"https://localhost:7081/api/News/{id}";
-            var response = await httpClient.GetAsync(apiUrl);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var news = await httpClient.GetFromJsonAsync<News>(apiUrl);
-                return news;
+                var apiUrl = $"https://localhost:7081/api/News/{id}";
+                var response = await httpClient.GetAsync(apiUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var news = await httpClient.GetFromJsonAsync<News>(apiUrl);
+                    return news;
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+                else
+                {
+                    throw new Exception("Error al obtener la noticia.");
+                }
             }
-            else if (response.StatusCode == HttpStatusCode.NotFound)
+
+            catch (Exception ex)
             {
                 return null;
+
             }
-            else
-            {
-                throw new Exception("Error al obtener la noticia.");
-            }
+
         }        
         public async Task<List<News>> GetNewsByCategory(int category)
         {
-
             List<News> newsCategorized;
-            var apiUrl = $"https://localhost:7081/api/News/sections/{category}";
-            var response = await httpClient.GetAsync(apiUrl);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var jsonString = await response.Content.ReadAsStringAsync();
-                var allNews = JsonSerializer.Deserialize<List<News>>(jsonString);
-                newsCategorized = allNews.OrderByDescending(n => n.publicationDate).Take(6).ToList();
-                return newsCategorized;
+                var apiUrl = $"https://localhost:7081/api/News/sections/{category}";
+                var response = await httpClient.GetAsync(apiUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var allNews = JsonSerializer.Deserialize<List<News>>(jsonString);
+                    newsCategorized = allNews.OrderByDescending(n => n.publicationDate).Take(6).ToList();
+                    return newsCategorized;
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+                else
+                {
+                    throw new Exception("Error al obtener las noticias.");
+                }
             }
-            else if (response.StatusCode == HttpStatusCode.NotFound)
+            catch (Exception ex)
             {
                 return null;
             }
-            else
-            {
-                throw new Exception("Error al obtener las noticias.");
-            }
+
 
             //List<News> newsCategorized;
             //var apiUrl = $"https://localhost:7081/api/News/";

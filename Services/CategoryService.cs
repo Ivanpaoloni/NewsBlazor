@@ -26,73 +26,100 @@ namespace NewsBlazor.Services
 
         public async Task Create(Category category)
         {
-            var apiUrl = "https://localhost:7081/api/category";
-
-            var response = await httpClient.PostAsJsonAsync(apiUrl, category);
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                var errorMessage = await response.Content.ReadAsStringAsync();
+                var apiUrl = "https://localhost:7081/api/category";
+
+                var response = await httpClient.PostAsJsonAsync(apiUrl, category);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                }
+            }
+            catch (Exception ex) 
+            {
             }
         }
 
         public async Task<List<Category>> Get()
         {
-
-            var apiUrl = "https://localhost:7081/api/category";
-            var response = await httpClient.GetAsync(apiUrl);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var jsonString = await response.Content.ReadAsStringAsync();
-                var allCategories = JsonSerializer.Deserialize<List<Category>>(jsonString);
-                return allCategories;
+                var apiUrl = "https://localhost:7081/api/category";
+                var response = await httpClient.GetAsync(apiUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var allCategories = JsonSerializer.Deserialize<List<Category>>(jsonString);
+                    return allCategories;
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+                else
+                {
+                    return new List<Category>();
+                    //throw new Exception("Error al obtener la categoria.");
+                }
             }
-            else if (response.StatusCode == HttpStatusCode.NotFound)
+            catch (Exception ex)
             {
                 return null;
-            }
-            else
-            {
-                return new List<Category>();
-                //throw new Exception("Error al obtener la categoria.");
             }
         }
 
         public async Task<Category> GetById(int id)
         {
-            var apiUrl = $"https://localhost:7081/api/category/{id}";
-            var response = await httpClient.GetAsync(apiUrl);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var category = await httpClient.GetFromJsonAsync<Category>(apiUrl);
-                return category;
+                var apiUrl = $"https://localhost:7081/api/category/{id}";
+                var response = await httpClient.GetAsync(apiUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    var category = await httpClient.GetFromJsonAsync<Category>(apiUrl);
+                    return category;
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+                else
+                {
+                    throw new Exception("Error al obtener la categoria.");
+                }
+
             }
-            else if (response.StatusCode == HttpStatusCode.NotFound)
+            catch (Exception ex)
             {
                 return null;
-            }
-            else
-            {
-                throw new Exception("Error al obtener la categoria.");
             }
         }
 
         public async Task<Category> GetByName(string name)
         {
-            var apiUrl = $"https://localhost:7081/api/category/name/{name}";
-            var response = await httpClient.GetAsync(apiUrl);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var category = await httpClient.GetFromJsonAsync<Category>(apiUrl);
-                return category;
+                var apiUrl = $"https://localhost:7081/api/category/name/{name}";
+                var response = await httpClient.GetAsync(apiUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    var category = await httpClient.GetFromJsonAsync<Category>(apiUrl);
+                    return category;
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+                else
+                {
+                    throw new Exception("Error al obtener la categoria.");
+                }
             }
-            else if (response.StatusCode == HttpStatusCode.NotFound)
+            catch (Exception ex)
             {
                 return null;
-            }
-            else
-            {
-                throw new Exception("Error al obtener la categoria.");
             }
         }
     }
