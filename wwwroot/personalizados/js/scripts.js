@@ -1,7 +1,22 @@
-/*!
-* Start Bootstrap - Blog Home v5.0.9 (https://startbootstrap.com/template/blog-home)
-* Copyright 2013-2023 Start Bootstrap
-* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-blog-home/blob/master/LICENSE)
-*/
-// This file is intentionally blank
-// Use this file to add JavaScript to your project
+
+//get navigator current location 
+
+window.getCurrentLocation = function () {
+    return new Promise(function (resolve, reject) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    resolve({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    });
+                },
+                function (error) {
+                    reject(error.message);
+                }
+            );
+        } else {
+            reject('Geolocation is not supported by this browser.');
+        }
+    });
+}

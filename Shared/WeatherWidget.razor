@@ -14,8 +14,7 @@
         <div class="card-body">
             @if(weatherData != null)
             {
-    <p>Ciudad: @weatherData.Name</p>
-    <p>Temperatura: @weatherData.Main.Temp °C</p>
+            <h5><i class="bi bi-pin-map-fill"></i> @weatherData.Name. <i class="bi bi-thermometer"></i>@weatherData.Main.Temp °C. <i class="bi bi-droplet-fill"></i>@weatherData.Main.Humidity%.</h5>
             }
 
     </div>
@@ -29,29 +28,32 @@
     {
         if (firstRender)
         {
+            var location = await JSRuntime.InvokeAsync<Location>("getCurrentLocation");
+            latitude = location.Latitude;
+            longitude = location.Longitude;
             await GetWeatherData();
             StateHasChanged();
         }
     }
+
     // funcion para obtener el clima y la localizacion.
     private async Task GetWeatherData()
     {
 
-        var latitude = -31.756278;
-        var longitude = -60.475150;
+        //var latitude = -31.756278;
+        //var longitude = -60.475150;
         var apiKey = "cb4b62d3cd1ba79ac4bb8f75805eaa14";
 
         weatherData = await WeatherService.GetWeatherDataByCoordinatesAsync(latitude, longitude, apiKey);
 
     }
-    public class GeolocationPosition
-    {
-        public GeolocationCoordinates Coords { get; set; }
-    }
-    public class GeolocationCoordinates
+    private double latitude;
+    private double longitude;
+
+    private class Location
     {
         public double Latitude { get; set; }
         public double Longitude { get; set; }
     }
-
 }
+

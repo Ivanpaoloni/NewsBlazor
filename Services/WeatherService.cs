@@ -17,7 +17,26 @@ public class WeatherService
         try
         {
             string url = $"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={apiKey}&units=metric";
-            return await _httpClient.GetFromJsonAsync<WeatherData>(url);
+            var response = await _httpClient.GetFromJsonAsync<WeatherData>(url);
+            if (response != null)
+            {
+                var weatherData = new WeatherData
+                {
+                    Name = response.Name,
+                    Main = new MainData
+                    {
+                        Temp = (float)Math.Round(response.Main.Temp, 1), // Convierte a int para quitar los decimales
+                        Humidity = response.Main.Humidity
+                    },
+                    Humidity = response.Humidity
+                };
+
+                return weatherData;
+            }
+            else
+            {
+                return null;
+            }
         }
         catch (Exception ex) 
         {
@@ -30,9 +49,11 @@ public class WeatherData
 {
     public string Name { get; set; }
     public MainData Main { get; set; }
+    public float Humidity { get; set; }
 }
 
 public class MainData
 {
     public float Temp { get; set; }
+    public float Humidity { get; set; } 
 }
