@@ -9,6 +9,8 @@
 @inject NewsService newsService
 @inject CategoryService categoryService
 @inject WeatherService WeatherService
+@inject NavigationManager NavigationManager
+
 @inject IJSRuntime JSRuntime
 
 <PageTitle>Inicio</PageTitle>
@@ -77,9 +79,9 @@
 
 @code {
     private List<News> newsList;
-
+    int page = 1;
     protected override async Task OnInitializedAsync()
     {
-        newsList = await newsService.Get();
+        newsList = await newsService.Get(page);
     }
 }
