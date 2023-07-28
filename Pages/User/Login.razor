@@ -49,8 +49,8 @@
             var authResponse = await response.Content.ReadFromJsonAsync<AthorizationResponse>();
             var accessToken = authResponse.token;
             errorMessage = string.Empty;
-            await jSRuntime.InvokeVoidAsync("setCookie", "AccessToken", accessToken);
-            // Almacenar el token en el local storage o en una cookie.
+            // Almacenar el token en una cookie.
+            //await jSRuntime.InvokeVoidAsync("setCookie", "AccessToken", accessToken);
             NavigationManager.NavigateTo("/admin");
         }
         else

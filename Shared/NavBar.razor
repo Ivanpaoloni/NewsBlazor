@@ -2,25 +2,15 @@
 @using System.Text.Json;
 @using NewsBlazor.Models;
 @using NewsBlazor.Services;
-@using Microsoft.AspNetCore.Components
 
 @inject HttpClient httpClient
 @inject CategoryService categoryService
-@inject NavigationManager NavigationManager;
 
 
 <!-- Responsive navbar-->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-greendark">
     <div class="container">
-        @if (IsUserAuthenticated)
-        {
-            <a class="navbar-text" style="text-decoration: none;" href="/admin"><i class="bi bi-person-circle"></i> Adminstración</a>          
-
-        }
-        else
-        {
-            <a class="navbar-text" style="text-decoration: none;" href="/login"><i class="bi bi-person-circle"></i> Ingresar</a>
-        }
+        <a class="navbar-text" style="text-decoration: none;" href="/login"><i class="bi bi-person-circle"></i> Ingresar</a>
         <a class="" style="font-size: 150%" href="https://www.linkedin.com/in/ivanpaoloni/"> <i class="bi bi-linkedin text-white mx-2"></i> </a>
         <a class="" style="font-size: 150%" href="https://github.com/Ivanpaoloni"> <i class="bi bi-github text-white mx-2"></i> </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
@@ -44,23 +34,8 @@
 @code {
     private List<Category> categories;
 
-    [Inject]
-    private IJSRuntime jsRuntime { get; set; }
-
-    private bool IsUserAuthenticated;
-
     protected override async Task OnInitializedAsync()
     {
         categories = await categoryService.Get();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-
-        if (firstRender)
-        {
-            IsUserAuthenticated = await jsRuntime.InvokeAsync<bool>("checkCookie", "AccessToken");
-            StateHasChanged();
-        }
     }
 }
