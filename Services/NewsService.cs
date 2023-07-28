@@ -9,7 +9,7 @@ namespace NewsBlazor.Services
 {
     public interface INewsService
     {
-        Task<List<News>> Get(int page);
+        Task<NewsPaginatedList> Get(int page = 1);
         Task<List<News>> GetNewsByCategory(int category);
         Task<News> GetNewsById(string id);
     }
@@ -22,7 +22,7 @@ namespace NewsBlazor.Services
             this.httpClient = httpClient;
         }
 
-        public async Task<List<News>> Get(int page =1)
+        public async Task<NewsPaginatedList> Get(int page =1)
         {
         
             try
@@ -37,19 +37,22 @@ namespace NewsBlazor.Services
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
 
-                    var allNews = JsonSerializer.Deserialize<NewsPaginatedList>(jsonString).items.ToList();
-                    var newsList = allNews.OrderByDescending(n => n.publicationDate).Take(2).ToList();
-                    return newsList;
+                    var allNews = JsonSerializer.Deserialize<NewsPaginatedList>(jsonString);
+                    //var allNews = JsonSerializer.Deserialize<NewsPaginatedList>(jsonString).items.ToList();
+                    //var newsList = allNews.OrderByDescending(n => n.publicationDate).Take(2).ToList();
+                    return allNews;
                 }
                 else
                 {
-                    return new List<News>();
+                    return new NewsPaginatedList();
+                    //return new List<News>();
                 }
 
             }
             catch (Exception ex)
             {
-                return new List<News>();
+                return new NewsPaginatedList();
+                //return new List<News>();
             }
 
         }

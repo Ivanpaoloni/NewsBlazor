@@ -34,7 +34,7 @@
                                             , @news.author.name, @news.publicationDate.ToShortDateString()</div>
                                                 <h2 class="card-title">@news.title</h2>
                                                 <p class="card-text">@news.description</p>
-                                        <a class="btn btn-danger" href="/viewnews/@news.id">Ver noticia completa →</a>
+                                                <a class="btn btn-danger" href="/viewnews/@news.id">Ver noticia completa →</a>
                                             </div>
                                         </div>
                                     }
@@ -54,6 +54,26 @@
                 <nav aria-label="Pagination">
                     <hr class="my-0" />
                     <ul class="pagination justify-content-center my-4">
+                        <li class="page-item @((currentPage == 1) ? "disabled" : "")">
+                            <a class="page-link" href="javascript:void(0);" tabindex="-1" aria-disabled="true">Newer</a>
+                        </li>
+
+                        @for (int i = 1; i <= totalPages; i++)
+                        {
+                            <li class="page-item @(currentPage == i ? "active" : "")">
+                                <a class="page-link" href="javascript:void(0);" @onclick="(() => ChangePage(2))">@i</a>
+                            </li>
+                        }
+
+                        <li class="page-item @((currentPage == totalPages) ? "disabled" : "")">
+                            <a class="page-link" href="javascript:void(0);">Older</a>
+                        </li>
+                    </ul>
+                </nav>
+
+                @*<nav aria-label="Pagination">
+                    <hr class="my-0" />
+                    <ul class="pagination justify-content-center my-4">
                         <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Newer</a></li>
                     <li class="page-item active" aria-current="page"><a class="page-link" href="#!">1</a></li>
                         <li class="page-item "><a class="page-link" href="#!">2</a></li>
@@ -62,7 +82,7 @@
                         <li class="page-item"><a class="page-link" href="#!">15</a></li>
                         <li class="page-item"><a class="page-link" href="#!">Older</a></li>
                     </ul>
-                </nav>
+                </nav>*@
             </div>
                 <!-- Side widgets-->
                 <div class="col-lg-4">
@@ -79,9 +99,47 @@
 
 @code {
     private List<News> newsList;
+    private NewsPaginatedList newsPaginatedList;
     int page = 1;
+    int currentPage = 1;
+    int totalPages = 1;
+    int itemsPerPage = 2;
+    int newPage = 1;
+
     protected override async Task OnInitializedAsync()
     {
-        newsList = await newsService.Get(page);
+        newsPaginatedList = await newsService.Get(page);
+        newsList = newsPaginatedList.items.OrderByDescending(n => n.publicationDate).Take(itemsPerPage).ToList();
+        currentPage = newsPaginatedList.pageNumber;
+        totalPages = newsPaginatedList.totalItems / itemsPerPage;
+
     }
+    //private async Task<NewsPaginatedList> ChangePage(int page)
+    //{
+    //    newPage = page;
+    //    newsPaginatedList = await newsService.Get(page);
+    //    newsList = newsPaginatedList.items.OrderByDescending(n => n.publicationDate).Take(itemsPerPage).ToList();
+    //    currentPage = newsPaginatedList.pageNumber;
+    //    return newsPaginatedList;   
+    //}
+    private async Task ChangePage(int page)
+    {
+        if (page >= 1 && page <= totalPages) // Asegurar que la página sea válida
+        {
+            newPage = page;
+            newsPaginatedList = await newsService.Get(page);
+            newsList = newsPaginatedList.items.OrderByDescending(n => n.publicationDate).Take(itemsPerPage).ToList();
+            currentPage = page; // Actualizar la página actual después de obtener los datos
+            StateHasChanged(); // Notificar a Blazor que el estado del componente ha cambiado
+        }
+    }
+    //OnParametersSetAsync lo utilizo para poder cambiar de categoria de noticia sin tener que volver al indice.
+    protected override async Task OnParametersSetAsync()
+    {
+        ChangePage(newPage);
+        StateHasChanged();
+    }
+
+
+    
 }

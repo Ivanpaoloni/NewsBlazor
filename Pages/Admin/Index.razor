@@ -1,27 +1,65 @@
 ﻿@page "/admin"
+@using Microsoft.AspNetCore.Components
+@using NewsBlazor.Services;
+@using NewsBlazor.Models;
+
+@inject NavigationManager NavigationManager;
 
 
-<div class="container-lg">
-    <h3>Panel de administracion</h3>
-    <div class="card">
-        <h5 class="card-header">Noticias</h5>
-        <div class="card-body">
-            <h5 class="card-title">Administrar noticias</h5>
-            <a href="/admin/addnews" class="btn btn-primary">Administrar</a>
+
+@if (IsUserAuthenticated)
+{
+    <div class="container-lg">
+        <h3>Bienvenido al panel de administración</h3>
+        <h6>Aqui tienes acceso a todas las funciones adminstrativas del sitio, tales como crear y editar noticias y categorias.</h6>
+        <hr />
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card">
+                    <h5 class="card-header">Noticias</h5>
+                    <div class="card-body">
+                        <a href="/admin/" class="btn btn-secondary btn-lg">Administrar noticias</a>
+                        <a href="/admin/addnews" class="btn btn-secondary btn-lg">Crear noticia</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="card">
+                    <h5 class="card-header">Categorias</h5>
+                    <div class="card-body">
+                        <a href="/admin/" class="btn btn-secondary btn-lg">Administrar cateogorias</a>
+                        <a href="/admin/addcategory" class="btn btn-secondary btn-lg">Crear categoria</a>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
     <br />
-    <div class="card">
-        <h5 class="card-header">Categorias</h5>
-        <div class="card-body">
-            <h5 class="card-title">Administrar categorias</h5>
-            <a href="/admin/addcategory" class="btn btn-primary">Administrar</a>
-        </div>
-    </div>
-</div>
-<br />
+}
+else
+{
+    <p>Acceso no autorizado. Por favor, inicia sesión.</p>
+}
 
 
 @code {
+    [Inject]
+    private IJSRuntime jsRuntime { get; set; }
 
+    private bool IsUserAuthenticated;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+       
+        if (firstRender)
+        {
+            IsUserAuthenticated = await jsRuntime.InvokeAsync<bool>("checkCookie", "AccessToken");
+            StateHasChanged();
+        }
+        if (IsUserAuthenticated == false)
+        {
+            NavigationManager.NavigateTo("/login");
+        } 
+    }
 }
