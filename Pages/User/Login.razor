@@ -1,7 +1,9 @@
 ﻿@page "/login"
 @using Microsoft.AspNetCore.Components
+@using NewsBlazor.Auth;
 @using NewsBlazor.Services;
 @using NewsBlazor.Models;
+@using System.Text.Json;
 
 @inject NavigationManager NavigationManager;
 
@@ -30,27 +32,29 @@
 
 
 @code {
-    private string errorMessage;
+    private string errorMessage = string.Empty;
     private UserCredentials user = new UserCredentials();
     [Inject]
-    private HttpClient httpClient { get; set; }
-    [Inject]
     private IJSRuntime jSRuntime { get; set; }
-
+    [Inject]
+    private HttpClient httpClient { get; set; }
 
     private async Task Log()
     {
         var loginModel = new { email = user.email, password = user.password };
 
-        HttpResponseMessage response = await httpClient.PostAsJsonAsync("https://localhost:7081/api/account/login", user);
-
-        if (response.IsSuccessStatusCode)
+        var apiUrl = "https://localhost:7081/api/account/login";
+        var result = await httpClient.PostAsJsonAsync(apiUrl, loginModel);
+        if (result.IsSuccessStatusCode)
         {
-            var authResponse = await response.Content.ReadFromJsonAsync<AthorizationResponse>();
-            var accessToken = authResponse.token;
+            // Lee el contenido de la respuesta como una cadena JSON
+            var responseContent = await result.Content.ReadAsStringAsync();
+
+            // Deserializa la cadena JSON en un objeto AuthorizationResponse
+            var authorizationResponse = JsonSerializer.Deserialize<AuthorizationResponse>(responseContent);
+            //await jWTAuthenticationProvider.Login(authorizationResponse.token);
+
             errorMessage = string.Empty;
-            // Almacenar el token en una cookie.
-            //await jSRuntime.InvokeVoidAsync("setCookie", "AccessToken", accessToken);
             NavigationManager.NavigateTo("/admin");
         }
         else
@@ -58,5 +62,20 @@
             errorMessage = "Completar los datos correctamente.";
             NavigationManager.NavigateTo(NavigationManager.Uri);
         }
+        //HttpResponseMessage response = await httpClient.PostAsJsonAsync("https://localhost:7081/api/account/login", user);
+        //if (response.IsSuccessStatusCode)
+        //{
+        //    var authResponse = await response.Content.ReadFromJsonAsync<AuthorizationResponse>();
+        //    var accessToken = authResponse.token;
+        //    errorMessage = string.Empty;
+        //    // Almacenar el token en una cookie.
+        //    //await jSRuntime.InvokeVoidAsync("setCookie", "AccessToken", accessToken);
+        //    NavigationManager.NavigateTo("/admin");
+        //}
+        //else
+        //{
+        //    errorMessage = "Completar los datos correctamente.";
+        //    NavigationManager.NavigateTo(NavigationManager.Uri);
+        //}
     }
 }

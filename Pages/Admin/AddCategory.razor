@@ -4,20 +4,28 @@
 @using NewsBlazor.Services;
 @inject NavigationManager NavigationManager;
 @inject CategoryService categoryService
+<AuthorizeView>
+    <Authorized>
+        <div class="container-lg">
+            <h2 class="text-center">Agregar categoria</h2>
 
-<div class="container-lg">
-    <h2 class="text-center">Agregar categoria</h2>
+            <div class="form-group">
+                <label for="description">Nombre de categoria</label>
+                <textarea class="form-control" id="name" rows="1" @bind="@category.name"></textarea>
+            </div>
+            <br />
+            <button class="btn btn-primary" @onclick="SubmitCategory">Agregar</button>
+            <a href="/admin" class="btn btn-secondary">Volver</a>
+            <br />
+            <br />
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <h3 class="text-center">No estas autorizado para ingresar a esta sección.</h3>
+    </NotAuthorized>
 
-    <div class="form-group">
-        <label for="description">Nombre de categoria</label>
-        <textarea class="form-control" id="name" rows="1" @bind="@category.name"></textarea>
-    </div>
-    <br />
-    <button class="btn btn-primary" @onclick="SubmitCategory">Agregar</button>
-    <a href="/admin" class="btn btn-secondary">Volver</a>
-    <br />
-    <br />
-</div>
+</AuthorizeView>
+
 
 @code {
     private Category category = new Category();

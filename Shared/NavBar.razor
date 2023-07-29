@@ -10,7 +10,15 @@
 <!-- Responsive navbar-->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-greendark">
     <div class="container">
-        <a class="navbar-text" style="text-decoration: none;" href="/login"><i class="bi bi-person-circle"></i> Ingresar</a>
+        <AuthorizeView>
+            <Authorized>
+                <a class="navbar-text mx-2" style="text-decoration: none;" href="/admin">Administración</a>
+                <a class="navbar-text mx-2" style="text-decoration: none;" href="/Logout"><i class="bi bi-person-circle"></i> Salir (@user)</a>
+            </Authorized>
+            <NotAuthorized>
+                <a class="navbar-text" style="text-decoration: none;" href="/login"><i class="bi bi-person-circle"></i> Ingresar</a>
+            </NotAuthorized>
+        </AuthorizeView>
         <a class="" style="font-size: 150%" href="https://www.linkedin.com/in/ivanpaoloni/"> <i class="bi bi-linkedin text-white mx-2"></i> </a>
         <a class="" style="font-size: 150%" href="https://github.com/Ivanpaoloni"> <i class="bi bi-github text-white mx-2"></i> </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
@@ -32,10 +40,19 @@
 </nav>
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+    private string user;
+
     private List<Category> categories;
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await authenticationState;
+        @if(authState.User.Identity.Name != null)
+        {
+            user = authState.User.Identity.Name.ToString();  
+        }
         categories = await categoryService.Get();
     }
 }

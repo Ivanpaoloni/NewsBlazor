@@ -43,7 +43,7 @@
                         </div>
                         if (newsList.Count == 0)
                         {
-                            <h3>No hay noticias disponibles.</h3>
+                            <h3 class="text-center">No hay noticias disponibles.</h3>
                         }
                     }
                     else
@@ -98,6 +98,10 @@
 
 
 @code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
     private List<News> newsList;
     private NewsPaginatedList newsPaginatedList;
     int page = 1;
@@ -106,12 +110,22 @@
     int itemsPerPage = 2;
     int newPage = 1;
 
+    private string user;
+
     protected override async Task OnInitializedAsync()
     {
         newsPaginatedList = await newsService.Get(page);
-        newsList = newsPaginatedList.items.OrderByDescending(n => n.publicationDate).Take(itemsPerPage).ToList();
-        currentPage = newsPaginatedList.pageNumber;
-        totalPages = newsPaginatedList.totalItems / itemsPerPage;
+        @if (newsPaginatedList.items != null)
+        {
+            newsList = newsPaginatedList.items.OrderByDescending(n => n.publicationDate).Take(itemsPerPage).ToList();
+            currentPage = newsPaginatedList.pageNumber;
+            totalPages = newsPaginatedList.totalItems / itemsPerPage;
+            
+        }
+        else
+        {
+            newsList = new List<News>();
+        }
 
     }
     //private async Task<NewsPaginatedList> ChangePage(int page)
@@ -124,16 +138,16 @@
     //}
     private async Task ChangePage(int page)
     {
-        if (page >= 1 && page <= totalPages) // Asegurar que la página sea válida
+        if (page >= 1 && page <= totalPages)
         {
             newPage = page;
             newsPaginatedList = await newsService.Get(page);
             newsList = newsPaginatedList.items.OrderByDescending(n => n.publicationDate).Take(itemsPerPage).ToList();
             currentPage = page; // Actualizar la página actual después de obtener los datos
-            StateHasChanged(); // Notificar a Blazor que el estado del componente ha cambiado
+            StateHasChanged();
         }
     }
-    //OnParametersSetAsync lo utilizo para poder cambiar de categoria de noticia sin tener que volver al indice.
+
     protected override async Task OnParametersSetAsync()
     {
         ChangePage(newPage);

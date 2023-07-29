@@ -1,0 +1,57 @@
+﻿@page "/register"
+@inject NavigationManager NavigationManager
+@inject HttpClient httpClient
+@using NewsBlazor.Auth;
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Components
+@using NewsBlazor.Services;
+@using System.Net.Http.Json;
+@using NewsBlazor.Models;
+@using System.Text.Json;
+
+<h3>Registro</h3>
+
+<EditForm Model="userCredentials" class="m-3" OnValidSubmit="CreateUser">
+    <DataAnnotationsValidator/>
+        <div class="form">
+            <label>Email:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@userCredentials.email"/>
+                <ValidationMessage For="@(()=> userCredentials.email)"></ValidationMessage>
+            </div>
+        </div>
+        <div class="form">
+            <label>Password:</label>
+            <div>
+                <InputPassword class="form-control" @bind-Value="@userCredentials.password"/>
+                <ValidationMessage For="@(()=> userCredentials.password)"></ValidationMessage>
+            </div>
+        </div>
+        <div>
+
+            <button type="submit" class="btn btn-primary mt-3">Registrar</button>
+        </div>
+</EditForm>
+
+@code {
+    private UserCredentials userCredentials = new UserCredentials();
+
+    private async Task CreateUser()
+    {
+        //await UserService.Create(userCredentials);
+        var apiUrl = "https://localhost:7081/api/account/register";
+        var result = await httpClient.PostAsJsonAsync(apiUrl, userCredentials);
+        if (result.IsSuccessStatusCode)
+        {
+            // Lee el contenido de la respuesta como una cadena JSON
+            var responseContent = await result.Content.ReadAsStringAsync();
+
+            // Deserializa la cadena JSON en un objeto AuthorizationResponse
+            var authorizationResponse = JsonSerializer.Deserialize<AuthorizationResponse>(responseContent);
+            //await ILoginService.Login(authorizationResponse.token);
+
+            NavigationManager.NavigateTo("/admin");
+        }   
+    
+    }
+}

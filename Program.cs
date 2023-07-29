@@ -6,15 +6,28 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.Authorization;
+using NewsBlazor.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+builder.Services.AddAuthorizationCore();
+//servicio de authentication falso
+builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProviderFalse>();
+builder.Services.AddScoped<JWTAuthenticationProvider>();
+builder.Services.AddScoped<ILoginService, JWTAuthenticationProvider>(provider => provider.GetRequiredService<JWTAuthenticationProvider>());
+
+//servicios de api news.
 builder.Services.AddSingleton<NewsService>();
 builder.Services.AddSingleton<CategoryService>();
+builder.Services.AddScoped<UserService>();
+//builder.Services.AddScoped<AuthenticationStateProvider, JWTAuthenticationProvider>(provider => provider.GetRequiredService<JWTAuthenticationProvider>());
 
+//servicio de api weather
 builder.Services.AddScoped<WeatherService>();
 
 builder.Services.AddHttpClient();

@@ -1,41 +1,46 @@
 ﻿@page "/admin"
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Components
 @using NewsBlazor.Services;
 @using NewsBlazor.Models;
 
 @inject NavigationManager NavigationManager;
 
-
-    <div class="container-lg">
-        <h3>Bienvenido al panel de administración</h3>
-        <h6>Aqui tienes acceso a todas las funciones adminstrativas del sitio, tales como crear y editar noticias y categorias.</h6>
-        <hr />
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="card">
-                    <h5 class="card-header">Noticias</h5>
-                    <div class="card-body">
-                        <a href="/admin/" class="btn btn-secondary btn-lg">Administrar noticias</a>
-                        <a href="/admin/addnews" class="btn btn-secondary btn-lg">Crear noticia</a>
+        <div class="container-lg mb-3">
+            <h3>Bienvenido al panel de administración</h3>
+            <h6>Aqui tienes acceso a todas las funciones adminstrativas del sitio, tales como crear y editar noticias y categorias.</h6>
+            <hr />
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="card">
+                        <h5 class="card-header">Noticias</h5>
+                        <div class="card-body">
+                            <a href="/admin/" class="btn btn-secondary btn-lg">Administrar noticias</a>
+                            <a href="/admin/addnews" class="btn btn-secondary btn-lg">Crear noticia</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="card">
-                    <h5 class="card-header">Categorias</h5>
-                    <div class="card-body">
-                        <a href="/admin/" class="btn btn-secondary btn-lg">Administrar cateogorias</a>
-                        <a href="/admin/addcategory" class="btn btn-secondary btn-lg">Crear categoria</a>
+                <div class="col-sm-6">
+                    <div class="card">
+                        <h5 class="card-header">Categorias</h5>
+                        <div class="card-body">
+                            <a href="/admin/" class="btn btn-secondary btn-lg">Administrar cateogorias</a>
+                            <a href="/admin/addcategory" class="btn btn-secondary btn-lg">Crear categoria</a>
+                        </div>
                     </div>
-                </div>
 
+                </div>
             </div>
         </div>
-    </div>
-    <br />
-
-
-
+@*<AuthorizeView>
+    <Authorized>
+    </Authorized>
+    <NotAuthorized>
+        <h3v class="text-center">No estas autorizado para ingresar a esta sección.</h3v>
+    </NotAuthorized>
+</AuthorizeView>*@
 
 @code {
 
